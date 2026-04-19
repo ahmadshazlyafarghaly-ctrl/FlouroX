@@ -189,6 +189,8 @@ const App = () => {
   const [showTeamPage, setShowTeamPage] = useState(false);
   const [atlasCategory, setAtlasCategory] = useState("All");
   const [atlasSearch, setAtlasSearch] = useState("");
+  const [showMasterclassPage, setShowMasterclassPage] = useState(false);
+  const [expandedFluoroType, setExpandedFluoroType] = useState(null);
 
   const [quizView, setQuizView] = useState("dashboard");
 
@@ -2117,7 +2119,131 @@ const App = () => {
   });
 
   const featuredAtlasItem = atlasItems.find((item) => item.featured);
+  const fluoroscopyTypes = [
+    {
+      id: 1,
+      title: "1- R/F Units with Under-Table X-ray Tube",
+      image: "/procedures/rf.jpg",
+      content: `
+  - X-ray tube under the table and image intensifier above the patient.
+  - Most common configuration used for GI, GU, and other diagnostic procedures. (2)
+      `,
+    },
+    {
+      id: 2,
+      title: "2- R/F Units with Over-Table X-ray Tube",
+      image: "/procedures/rff.jpg",
+      content: `
+  - X-ray tube above the table and image intensifier below.
+  - Provides better patient access but results in higher staff radiation exposure. (2)
+      `,
+    },
+    {
+      id: 3,
+      title: "3- Fixed C-arm",
+      image: "/procedures/rfff.jpg",
+      content: `
+  - Allows rotation of the imaging chain around the patient.
+  - Mainly used for cardiac, vascular, and neuro-interventional procedures. (2)
+      `,
+    },
+    {
+      id: 4,
+      title: "4- Biplane Systems",
+      image: "/procedures/rffff.jpg",
+      content: `
+  - Uses two imaging chains to obtain frontal and lateral images simultaneously.
+  - Useful in cardiac and neuroangiography. (2)
+      `,
+    },
+    {
+      id: 5,
+      title: "5- Tilt C-arm Systems",
+      image: "/procedures/rfffff.jpg",
+      content: `
+  - C-arm system with a tilting patient table for general and interventional procedures. (2)
+      `,
+    },
+    {
+      id: 6,
+      title: "6- Mobile C-arm Systems",
+      image: "/procedures/rffffff.jpg",
+      content: `
+  - Portable units used mainly in operating rooms, especially in orthopedic and vascular surgeries. (2)
+      `,
+    },
+    {
+      id: 7,
+      title: "7- Mini C-arm systems",
+      image: "/procedures/rfffffff.jpg", // ممكن تعيد استخدام صورة
+      content: `
+  - Are used for imaging extremities with lower radiation exposure. (2)
+      `,
+    },
+  ];
+  const fluoroscopyComponents = [
+    {
+      title: "1- X-ray Generator",
+      content:
+        "Controls kVp and mA and supports continuous or pulsed fluoroscopy with Automatic Brightness Control (ABC). Can operate as single-phase, three-phase, constant potential, or high-frequency (2).",
+    },
+    {
+      title: "2- X-ray Tube",
+      content:
+        "Produces X-rays by accelerating electrons from a heated filament to a tungsten anode inside a vacuum-sealed enclosure. Image quality is affected by focal spot size and anode angle (2).",
+    },
+    {
+      title: "3- Collimator",
+      content:
+        "Shapes the X-ray beam using round and rectangular radiopaque blades. Reduces exposed tissue, scatter radiation, and glare (2).",
+    },
+    {
+      title: "4- Filtration",
+      content:
+        "Removes low-energy X-rays that increase patient dose without improving image quality. Aluminium or copper filtration is used in high-dose fluoroscopy (2).",
+    },
+    {
+      title: "5- Patient Table",
+      content:
+        "Must support large patients while minimizing X-ray attenuation. Commonly made of carbon fiber composites (2).",
+    },
+    {
+      title: "6- Anti-Scatter Grids",
+      content:
+        "Improve image contrast by reducing scatter radiation. Fluoroscopy grids have lower ratios than radiography (2).",
+    },
+    {
+      title: "7- Image Intensifier",
+      content:
+        "Converts X-rays into a bright visible image with brightness amplification. Components: Input layer → Electron lenses → Anode → Output layer (2).",
+    },
+    {
+      title: "8- Optical Coupling",
+      content:
+        "Transfers light from the image intensifier to the video camera and recording devices (2).",
+    },
+    {
+      title: "9- Effect of Aperture",
+      content:
+        "Small aperture → less light reaches camera → ABC increases radiation → lower image noise. Wide aperture → more light reaches camera → lower radiation dose → higher image noise (2).",
+    },
+    {
+      title: "10- Television System",
+      content:
+        "Closed-circuit system for real-time viewing. Consists of a video camera and monitor. Includes traditional vacuum tube camera and CCD camera (2).",
+    },
+    {
+      title: "11- Image Recording",
+      content:
+        "Includes spot film devices, film changers, photospot cameras, cine cameras, and modern digital recording systems (2).",
+    },
+  ];
 
+  const masterclassReferences = [
+    "1- Gingold, E. (2020). Modern fluoroscopy imaging systems. ImageWisely website.",
+    "2- Pooley, R. A., McKinney, J. M., & Miller, D. A. (2001). The AAPM/RSNA physics tutorial for residents: digital fluoroscopy. Radiographics, 21(2), 521-534.",
+    "3- About fluoroscopy 2024; Available from: https://www.cdc.gov/radiation-health/data-research/facts-stats/fluoroscopy.html",
+  ];
   // Comprehensive Medical Data
   const proceduresData = [
     // --- GASTROINTESTINAL TRACT (GIT) ---
@@ -2820,43 +2946,40 @@ const App = () => {
 
   return (
     <div className="flex flex-col h-screen bg-[#05080D] text-gray-100 font-sans select-none overflow-hidden">
-      {/* Header */}
-      <div className="relative min-h-[220px] p-6 pb-4 flex justify-between items-start overflow-hidden">
-        {/* Background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center pointer-events-none"
-          style={{ backgroundImage: "url('/sphinx.jpg')" }}
-        />
+      {activeTab === "home" && (
+        <div className="relative min-h-[220px] p-6 pb-4 flex justify-between items-start overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center pointer-events-none"
+            style={{ backgroundImage: "url('/sphinx.jpg')" }}
+          />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px] pointer-events-none" />
+          <div className="relative z-10">
+            <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">
+              Welcome to
+            </p>
 
-        {/* Title */}
-        <div className="relative z-10">
-          <p className="text-cyan-400 text-xs font-bold uppercase tracking-[0.3em]">
-            Welcome to
-          </p>
-
-          <h1 className="text-4xl sm:text-5xl font-black mt-1">
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
-              Fluoro X
-            </span>
-          </h1>
+            <h1 className="text-4xl sm:text-5xl font-black mt-1">
+              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                Fluoro Master
+              </span>
+            </h1>
+          </div>
         </div>
+      )}
 
-        {/* 👤 User Button */}
+      {/* 👤 User Button */}
+      {activeTab === "home" && (
         <button
           onClick={() => {
             setSelectedProcedure(null);
             setShowSafetyCheck(false);
             setShowTeamPage(true);
           }}
-          className="relative z-20 w-10 h-10 rounded-full bg-[#0E1520] flex items-center justify-center text-gray-300 hover:text-cyan-400 transition"
+          className="absolute top-6 right-7 z-50 w-10 h-10 rounded-full bg-[#0E1520] flex items-center justify-center text-gray-300"
         >
-          <User size={20} />
+          <User size={30} />
         </button>
-      </div>
-
+      )}
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto pb-24">
         {showTeamPage && (
@@ -3151,7 +3274,218 @@ const App = () => {
             </div>
           </div>
         )}
-        {activeTab === "home" && (
+        {showMasterclassPage && (
+          <div className="absolute inset-0 z-40 bg-[#05080D] overflow-y-auto">
+            <div className="min-h-full bg-[#05080D] pb-28">
+              <div className="sticky top-0 z-20 bg-[#0B1825]/95 backdrop-blur-md border-b border-gray-800 px-6 py-5 flex items-center gap-4">
+                <button
+                  onClick={() => setShowMasterclassPage(false)}
+                  className="text-white hover:text-[#48B3E4] transition-colors"
+                >
+                  <ArrowLeft size={28} />
+                </button>
+                <h2 className="text-2xl font-bold text-white">
+                  Fluoroscopy Masterclass
+                </h2>
+              </div>
+
+              <div className="px-6 py-6 space-y-8">
+                <div className="flex justify-center">
+                  <img
+                    src="/procedures/fluoros.jpg"
+                    alt="Fluoroscopy Machine"
+                    className="w-full max-w-[320px] opacity-80"
+                  />
+                </div>
+
+                <div>
+                  <h1 className="text-5xl font-black leading-tight text-white">
+                    Fluoroscopy
+                    <br />
+                    Masterclass
+                  </h1>
+                </div>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    What is Fluoroscopy?
+                  </h2>
+                  <div className="bg-[#111A2B] rounded-[28px] border border-blue-900/20 p-6">
+                    <div className="flex gap-4 items-start">
+                      <Info
+                        className="text-[#48B3E4] mt-1 shrink-0"
+                        size={28}
+                      />
+                      <p className="text-xl leading-relaxed text-gray-100">
+                        Fluoroscopy is a medical imaging procedure that uses
+                        X-rays to show internal organs and tissues working in
+                        real time. (1)
+                      </p>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    How does it Work?
+                  </h2>
+                  <div className="bg-[#111A2B] rounded-[28px] border border-blue-900/20 p-6">
+                    <div className="flex gap-4 items-start">
+                      <Settings
+                        className="text-[#48B3E4] mt-1 shrink-0"
+                        size={28}
+                      />
+                      <ul className="list-disc pl-5 text-lg leading-relaxed text-gray-100 space-y-3">
+                        <li>
+                          Uses a continuous or pulsed X-ray beam that passes
+                          through the patient to an image detector.
+                        </li>
+                        <li>
+                          Different tissues absorb X-rays in varying amounts
+                          depending on their density.
+                        </li>
+                        <li>
+                          The detector converts the transmitted radiation into
+                          real-time images displayed on a monitor.
+                        </li>
+                        <li>
+                          Modern systems use image intensifiers or digital
+                          flat-panel detectors to enhance image quality while
+                          minimizing radiation dose. (3)
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    Types of Fluoroscopy Systems
+                  </h2>
+
+                  {fluoroscopyTypes.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-[#111A2B] rounded-[24px] border border-blue-900/20 overflow-hidden"
+                    >
+                      <button
+                        onClick={() =>
+                          setExpandedFluoroType(
+                            expandedFluoroType === item.id ? null : item.id
+                          )
+                        }
+                        className="w-full flex items-center justify-between px-5 py-5 text-left"
+                      >
+                        <span className="text-2xl font-medium pr-4">
+                          {item.title}
+                        </span>
+                        <ChevronRight
+                          size={24}
+                          className={`transition-transform ${
+                            expandedFluoroType === item.id
+                              ? "rotate-90 text-[#48B3E4]"
+                              : "text-white"
+                          }`}
+                        />
+                      </button>
+
+                      {expandedFluoroType === item.id && (
+                        <div className="px-5 pb-5 space-y-4">
+                          <p className="text-lg leading-9 text-gray-400 whitespace-pre-line">
+                            {item.content}
+                          </p>
+
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-[260px] object-cover rounded-2xl border border-white/10"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    Components of Fluoroscopy Machine
+                  </h2>
+                  <div className="space-y-4">
+                    {fluoroscopyComponents.map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-[#0E1624] rounded-[24px] border border-blue-900/20 p-6"
+                      >
+                        <h3 className="text-2xl font-bold text-white mb-3">
+                          {item.title}
+                        </h3>
+                        <p className="text-lg leading-8 text-gray-400">
+                          {item.content}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    Benefits and Risks
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-[#0F2B1C] rounded-[24px] border border-green-500/30 p-6">
+                      <h3 className="text-2xl font-bold text-green-400 mb-4">
+                        Benefits
+                      </h3>
+                      <ul className="list-disc pl-5 text-lg leading-8 text-gray-100 space-y-2">
+                        <li>
+                          Provides real-time imaging for accurate guidance of
+                          diagnostic and interventional procedures.
+                        </li>
+                        <li>
+                          Improves success of procedures such as catheter
+                          placement and stent insertion. (3)
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-[#2A1014] rounded-[24px] border border-red-500/30 p-6">
+                      <h3 className="text-2xl font-bold text-red-400 mb-4">
+                        Risks
+                      </h3>
+                      <ul className="list-disc pl-5 text-lg leading-8 text-gray-100 space-y-2">
+                        <li>
+                          Exposure to ionizing radiation, especially with
+                          prolonged or repeated use.
+                        </li>
+                        <li>
+                          Small risk of allergic reaction or kidney impairment
+                          when contrast media are used. (3)
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h2 className="text-[#48B3E4] text-3xl font-black">
+                    References
+                  </h2>
+                  <div className="space-y-4">
+                    {masterclassReferences.map((ref, index) => (
+                      <div
+                        key={index}
+                        className="text-gray-400 text-lg leading-8"
+                      >
+                        • {ref}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === "home" && !showMasterclassPage && (
           <div className="px-6 space-y-8 animate-in fade-in duration-500">
             <div className="relative w-full h-[220px] rounded-2xl overflow-hidden">
               {/* صورة الجامعة */}
@@ -3167,7 +3501,7 @@ const App = () => {
                   WELCOME TO
                 </p>
 
-                <h1 className="text-3xl font-bold text-white">FluoroX</h1>
+                <h1 className="text-3xl font-bold text-white">FluoroMaster</h1>
               </div>
             </div>
             {/* Practical Tools */}
@@ -3218,7 +3552,7 @@ const App = () => {
                 </span>
                 <div>
                   <h2 className="text-2xl font-bold text-white leading-tight">
-                    About FluoroX
+                    About FluoroMaster
                   </h2>
                   <p className="text-gray-400 text-sm mt-1 max-w-[220px]">
                     Learn the machine, physics, and safety principles.
@@ -3226,13 +3560,12 @@ const App = () => {
                 </div>
                 <button
                   onClick={() => {
-                    setSelectedProcedure(null);
-                    setShowSafetyCheck(false);
-                    setShowTeamPage(true);
+                    setShowTeamPage(false);
+                    setShowMasterclassPage(true);
                   }}
                   className="w-10 h-10 rounded-2xl bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30"
                 >
-                  <ArrowRight size={20} />
+                  <ArrowRight size={18} />
                 </button>
               </div>
               <div className="absolute top-0 right-0 p-4 opacity-10">
